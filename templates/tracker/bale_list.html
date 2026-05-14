@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Stock Dashboard" %}{% endblock %}
+{% block content %}
+<h1>{% trans "Bale Stock" %}</h1>
+<form hx-get="{% url 'tracker:bale_list' %}" hx-target="#bale-table-body" hx-swap="innerHTML" class="grid grid-4">
+  {{ search_form.as_p }}
+  <button type="submit">{% trans "Search" %}</button>
+</form>
+<div id="bale-table-body">
+  {% include 'tracker/partials/bale_table.html' %}
+</div>
+{% if is_br_clerk %}
+  <a href="{% url 'tracker:bale_create' %}" class="btn">{% trans "Add Bale" %}</a>
+{% endif %}
+{% endblock %}

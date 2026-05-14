@@ -1,0 +1,25 @@
+{% load i18n humanize %}
+<div class="grid grid-4">
+  <div class="card"><div>{% trans "Intake" %}</div><h2>{{ metrics.intake }}</h2></div>
+  <div class="card"><div>{% trans "Collected" %}</div><h2>{{ metrics.outflow }}</h2></div>
+  <div class="card"><div>{% trans "Net Change" %}</div><h2>{{ metrics.net_change }}</h2></div>
+  <div class="card"><div>{% trans "Ratio" %}</div><h2>{{ metrics.ratio }}</h2></div>
+</div>
+<div class="grid grid-2" style="margin-top: 2rem;">
+  <div class="card">
+    <h3>{% trans "Defect Breakdown" %}</h3>
+    <table>
+      {% for d in defects %}
+      <tr><td>{{ d.get_reason_display }}</td><td>{{ d.count }}</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+  <div class="card">
+    <h3>{% trans "Stock by Floor" %}</h3>
+    <table>
+      {% for s in stock_by_floor %}
+      <tr><td>{% trans "Floor" %} {{ s.floor }}</td><td>{{ s.count }}</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>

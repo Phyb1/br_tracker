@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Metrics Dashboard" %}{% endblock %}
+{% block content %}
+<h1>{% trans "BR Bale Metrics" %}</h1>
+<form method="get" hx-get="{% url 'tracker:metrics' %}" hx-target="#metrics-content" hx-swap="innerHTML" class="grid grid-3">
+  <input type="date" name="start" value="{{ start_date }}">
+  <input type="date" name="end" value="{{ end_date }}">
+  <button type="submit">{% trans "Update" %}</button>
+</form>
+<div id="metrics-content">
+  {% include 'tracker/partials/metrics_panel.html' %}
+</div>
+{% endblock %}

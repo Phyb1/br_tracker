@@ -1,37 +1,49 @@
-ZLT BR Bale Tracker - TSF Mvurwi
+# ZLT BR Bale Tracker - TSF Mvurwi
 
-Track unsold tobacco bales stacked vertically 3-5 high along rows at TSF Mvurwi.
-Scanner posts daily → Django stores location → One-page HTMX app for search + update.
+Track uncollected tobacco bales stacked vertically 3-5 high along rows at TSF Mvurwi.
+v1: Manual entry via Django Admin. v2: Phone camera OCR. v3: Bluetooth scanner API.
 
-Problem
-Unsold bales are stacked vertically in rows across 4 floors. 
-BR staff currently spend hours walking floors to locate a specific bale for customers or collection.
+## Problem
+Uncollected bales are stacked vertically in rows across 4 floors A-D.
+BR staff spend 20-30min walking floors to locate specific bales for collection/dispatch.
 
-Solution
-Scan bale barcode → system pulls grower/lot/mass from ZLT scanner API → saves to Stack/Row/Level.
-Search by grower code or date to get exact location instantly: "STACK-A-07 Row 12 Level 3".
+## Solution
+Manual entry v1 → Phone OCR v2 → Full API v3. 
+Search by Grower No/Lot No/Date → exact location: "FLOOR-D STACK-D-07 Row 12 Level 4"
+Target: <10sec lookup vs 30min walk.
 
-Stack Layout
+## Stack Layout
 - **Floor**: A, B, C, D
-- **Stack**: e.g. STACK-A-07 
-- **Row**: 1-34 along the stack length
-- **Level**: 1-5 vertical height, bale is placed on top of previous bale
+- **Stack**: e.g. STACK-D-07, STACK-A-23
+- **Row**: 1-34 along stack length  
+- **Level**: 1-5 vertical height. Bale placed on top of previous bale
 
-Tech Stack
-Django 5 + Django REST Framework + HTMX + SQLite/Postgres
-*Project Specification Sheet*
+## Bale Status
+- **Uncollected**: In warehouse, awaiting grower collection/dispatch
+- **Collected**: Handed to grower/transporter, removed from stack
 
-*System Name:* ZLT BR Bale Location Tracker  
-*Department:* Collection BR Dept, TSF Mvurwi  
-*Owner:* ZLT  
-*Season:* 2025/26
+## Tech Stack
+Django 5 + DRF + HTMX + SQLite/Postgres
+v2 add: Tesseract OCR + OpenCV for ticket reading
 
-*Objective:* Maintain real-time database of unsold bale positions to reduce location time from 30min to <10sec.
+## Roadmap
 
-*Environment:* Internal ZLT WiFi. Accessed via Android tablet + Bluetooth barcode scanner.
+### v1: Manual Entry via Admin - Ship Now
+1. BR staff login to `/admin/` on tablet
+2. Add Bale: enter Barcode, Grower No, Lot No, Mass, Class
+3. Select Floor/Stack/Row/Level from dropdowns
+4. Status defaults to `Uncollected`
+5. HTMX search: `/bales/` filter by Grower/Lot/Date → shows location
+6. Mark `Collected` button: logs timestamp + user
 
-*Data Flow:*
-1. Worker scans bale barcode on ticket
-2. API calls ZLT scanner system → returns growers, lot, mass, class
-3. Worker selects Stack + Row + Level on tablet
-4. System saves/updates record or marks as collected
+### v2: Phone Camera + OCR - Next 2 Weeks
+1. Worker hits `/scan/` on phone browser
+2. Camera snaps bale ticket image
+3. Tesseract extracts: Barcode, Grower No, Lot No, Mass
+4. Form pre-filled. Worker selects Floor/Stack/Row/Level only
+5. Submit → Save. OCR confidence shown. Manual override if <80%
+
+### v3: ZLT Scanner API - Season End
+1. Bluetooth barcode scanner → POST `/api/scan/`
+2. Backend calls ZLT API → returns all bale data
+3. Worker only picks location. Zero typing.

@@ -1,0 +1,12 @@
+{% load i18n %}
+<div class="card" id="bale-card-{{ bale.id }}">
+  <strong>{{ bale.barcode }}</strong> - {{ bale.grower_no }}
+  <div>{{ bale.location_display }}</div>
+  <div>{% trans "Status" %}: {{ bale.get_status_display }}</div>
+  {% if bale.is_available and is_collection %}
+  <div style="margin-top: 0.5rem;">
+    <button hx-post="{% url 'tracker:bale_reserve' bale.pk %}" hx-target="#bale-card-{{ bale.id }}" hx-swap="outerHTML">{% trans "Reserve" %}</button>
+    <button hx-post="{% url 'tracker:bale_collect' bale.pk %}" hx-target="#bale-card-{{ bale.id }}" hx-swap="outerHTML">{% trans "Collect" %}</button>
+  </div>
+  {% endif %}
+</div>

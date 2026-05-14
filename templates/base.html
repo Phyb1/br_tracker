@@ -1,0 +1,40 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{% trans "BR Bale Tracker" %}{% endblock %} - TSF Mvurwi</title>
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="navbar">
+    <div class="container">
+      <a href="{% url 'tracker:bale_list' %}" class="brand">{% trans "TSF Mvurwi BR Tracker" %}</a>
+      <nav class="nav-links">
+        <a href="{% url 'tracker:bale_list' %}">{% trans "Stock" %}</a>
+        <a href="{% url 'tracker:brrecord_list' %}">{% trans "BR Records" %}</a>
+        <a href="{% url 'tracker:metrics' %}">{% trans "Metrics" %}</a>
+        {% if user.is_authenticated %}
+          <span>{{ user.username }}</span>{% comment %}
+          <form method="post" action="{% url 'logout' %}" style="display:inline;">{% endcomment %}
+            {% csrf_token %}<button type="submit" class="btn-link">{% trans "Logout" %}</button>
+          </form>
+        {% endif %}
+        <button id="theme-toggle">🌓</button>
+      </nav>
+    </div>
+  </header>
+  <main class="container">
+    <div id="messages">
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% block content %}{% endblock %}
+  </main>
+  <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{% load i18n %}
+<div class="hide-mobile">
+  <table>
+    <thead>
+      <tr><th>{% trans "Barcode" %}</th><th>{% trans "Grower" %}</th><th>{% trans "Location" %}</th><th>{% trans "Status" %}</th><th>{% trans "Actions" %}</th></tr>
+    </thead>
+    <tbody id="bale-table-body">
+      {% for bale in bales %}
+        {% include 'tracker/partials/bale_row.html' %}
+      {% empty %}
+        <tr><td colspan="5" class="text-center">{% trans "No bales found" %}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+<div class="show-mobile">
+  {% for bale in bales %}
+    {% include 'tracker/partials/bale_card.html' %}
+  {% empty %}
+    <div class="card">{% trans "No bales found" %}</div>
+  {% endfor %}
+</div>

@@ -1,0 +1,12 @@
+<tr id="bale-{{ bale.id }}">
+  <td>{{ bale.barcode }}</td>
+  <td>{{ bale.grower_no }}</td>
+  <td>{{ bale.location_display }}</td>
+  <td>{{ bale.get_status_display }}</td>
+  <td>
+    {% if bale.is_available and is_collection %}
+      <button hx-post="{% url 'tracker:bale_reserve' bale.pk %}" hx-target="#bale-{{ bale.id }}" hx-swap="outerHTML">{% trans "Reserve" %}</button>
+      <button hx-post="{% url 'tracker:bale_collect' bale.pk %}" hx-target="#bale-{{ bale.id }}" hx-swap="outerHTML">{% trans "Collect" %}</button>
+    {% endif %}
+  </td>
+</tr>
