@@ -8,6 +8,9 @@ from decouple import config, Csv
 DEBUG = False
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
+# white noise
+MIDDLEWARE.insert(1,'whitenoise.middleware.WhiteNoiseMiddleware', )
+
 # HTTPS/SSL Security - redirect HTTP to HTTPS instead of 403
 SECURE_SSL_REDIRECT = True  # This does the redirect
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # If behind nginx
@@ -27,9 +30,10 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
 
 # Static files: use WhiteNoise or nginx in prod
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 STATICFILES_DIRS = [BASE_DIR / 'static']  # only if you have a /static/ folder in project root
 # Database: Use Postgres in prod. Example:
 # DATABASES = {
