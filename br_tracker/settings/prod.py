@@ -28,7 +28,9 @@ X_FRAME_OPTIONS = 'DENY'
 
 # Static files: use WhiteNoise or nginx in prod
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / 'static']  # only if you have a /static/ folder in project root
 # Database: Use Postgres in prod. Example:
 # DATABASES = {
 #     'default': {
