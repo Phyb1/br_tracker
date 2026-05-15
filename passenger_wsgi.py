@@ -1,10 +1,18 @@
-import os
 import sys
+import os
+from pathlib import Path
 
-# Add project to path
-sys.path.insert(0, os.path.dirname(__file__))
+PROJECT_DIR = Path(__file__).resolve().parent
 
-# Set settings module
-os.environ['DJANGO_SETTINGS_MODULE'] = 'br_tracker.settings.prod'
+# Add the project folder to path, not the parent
+sys.path.insert(0, str(PROJECT_DIR))
 
-from br_tracker.wsgi import application
+# Activate venv
+VENV = Path('/home/mathxuco/virtualenv/br_tracker/public_html/3.11')
+activate_this = VENV / 'bin' / 'activate_this.py'
+exec(open(activate_this).read(), {'__file__': str(activate_this)})
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'br_tracker.settings.prod')
+
+from django.core.wsgi import get_wsgi_application
+application = get_wsgi_application()
