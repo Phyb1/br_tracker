@@ -4,6 +4,8 @@ Use: DJANGO_SETTINGS_MODULE=br_tracker.settings.prod
 """
 from .base import *
 from decouple import config, Csv
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent.parent  # points to /home/mathxuco/virtualenv/br_tracker/public_html
 
 DEBUG = False
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
@@ -29,7 +31,6 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
 
-BASE_DIR = Path(__file__).resolve().parent.parent
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
