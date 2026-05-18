@@ -215,7 +215,8 @@ class Bale(models.Model):
         _('Barcode'),
         max_length=50,
         db_index=True,
-        help_text=_('Physical barcode on bale')
+        help_text=_('Physical barcode on bale'),
+        blank=True
     )
     grower_no = models.CharField(
         _('Grower Number'),

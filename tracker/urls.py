@@ -20,8 +20,8 @@ urlpatterns = [
     path('bale/<int:pk>/collect/', views.BaleCollectView.as_view(), name='bale_collect'),
     
     # BR records
-    path('br/', views.BRRecordListView.as_view(), name='brrecord_list'),
-    path('br/add/', views.BRRecordCreateView.as_view(), name='brrecord_create'),
+    path('stock/', views.BRRecordListView.as_view(), name='brrecord_list'),
+    path('stock/add/', views.BRRecordCreateView.as_view(), name='brrecord_create'),
     
     # Dashboard
     path('metrics/', views.MetricsDashboardView.as_view(), name='metrics'),
