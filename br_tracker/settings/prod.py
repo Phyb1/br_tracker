@@ -33,7 +33,7 @@ STATIC_ROOT = BASE_DIR.parent / 'public_html' / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Database - use DATABASE_URL from .env
-DATABASES['default'] = dj_database_url.parse(config('DATABASE_URL'))
+#DATABASES['default'] = dj_database_url.parse(config('DATABASE_URL'))
 
 # Logging
 LOGGING = {
