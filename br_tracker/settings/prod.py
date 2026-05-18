@@ -4,7 +4,7 @@ Use: DJANGO_SETTINGS_MODULE=br_tracker.settings.prod
 """
 from .base import *
 from decouple import config, Csv
-import dj_database_url
+
 
 DEBUG = False
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
