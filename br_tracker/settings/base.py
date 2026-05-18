@@ -96,9 +96,10 @@ LOCALE_PATHS = [BASE_DIR / 'locale']
 MIDDLEWARE.insert(2, 'django.middleware.locale.LocaleMiddleware')
 
 # Static files (CSS, JavaScript, Images)
+# Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # collectstatic output
-STATICFILES_DIRS = [BASE_DIR / 'static']  # Your source static
+STATIC_ROOT = BASE_DIR.parent / 'public_html' / 'staticfiles'  # collectstatic output
+STATICFILES_DIRS = [BASE_DIR / 'static'] 
 
 # Media files - bale ticket images for v2 OCR
 MEDIA_URL = '/media/'

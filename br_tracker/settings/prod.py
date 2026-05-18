@@ -4,54 +4,38 @@ Use: DJANGO_SETTINGS_MODULE=br_tracker.settings.prod
 """
 from .base import *
 from decouple import config, Csv
-from pathlib import Path
-BASE_DIR = Path(__file__).resolve().parent.parent.parent  # points to /home/mathxuco/virtualenv/br_tracker/public_html
+import dj_database_url
 
 DEBUG = False
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
 
-# white noise
-MIDDLEWARE.insert(1,'whitenoise.middleware.WhiteNoiseMiddleware', )
+# WhiteNoise - insert after SecurityMiddleware
+MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 
-# HTTPS/SSL Security - redirect HTTP to HTTPS instead of 403
-SECURE_SSL_REDIRECT = True  # This does the redirect
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # If behind nginx
-
-# HSTS - force browsers to use HTTPS for 1 year
+# HTTPS/SSL Security
+SECURE_SSL_REDIRECT = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
-# Cookie security - only send over HTTPS
+# Cookie security
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
-# Other security headers
+# Security headers
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
 
-STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-# Static files: use WhiteNoise or nginx in prod
-STATIC_URL = '/static/'
-
+# Static files - override base.py to match cPanel structure
+STATIC_ROOT = BASE_DIR.parent / 'public_html' / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Database: Use Postgres in prod. Example:
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': config('DB_NAME'),
-#         'USER': config('DB_USER'),
-#         'PASSWORD': config('DB_PASSWORD'),
-#         'HOST': config('DB_HOST'),
-#         'PORT': config('DB_PORT', cast=int),
-#     }
-# }
+# Database - use DATABASE_URL from .env
+DATABASES['default'] = dj_database_url.parse(config('DATABASE_URL'))
 
-# Logging for prod
+# Logging
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -59,7 +43,7 @@ LOGGING = {
         'file': {
             'level': 'ERROR',
             'class': 'logging.FileHandler',
-            'filename': BASE_DIR / 'django-error.log',
+            'filename': BASE_DIR.parent / 'public_html' / 'django-error.log',
         },
     },
     'loggers': {
