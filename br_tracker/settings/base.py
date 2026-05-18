@@ -57,6 +57,11 @@ TEMPLATES = [
     },
 ]
 
+# crispy forms
+INSTALLED_APPS += ['crispy_forms', 'crispy_bootstrap5']
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
 WSGI_APPLICATION = 'br_tracker.wsgi.application'
 
 # Database - default sqlite. Override in prod.py for Postgres
@@ -98,7 +103,7 @@ MIDDLEWARE.insert(2, 'django.middleware.locale.LocaleMiddleware')
 # Static files (CSS, JavaScript, Images)
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR.parent / 'public_html' / 'staticfiles'  # collectstatic output
+STATIC_ROOT = BASE_DIR.parent  / 'staticfiles'  # collectstatic output
 STATICFILES_DIRS = [BASE_DIR / 'static'] 
 
 # Media files - bale ticket images for v2 OCR
@@ -108,6 +113,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Login URLs
-LOGIN_URL = 'admin:login'
+LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'tracker:bale_search'
-LOGOUT_REDIRECT_URL = 'admin:login'
+LOGOUT_REDIRECT_URL = 'tracker:bale_search'

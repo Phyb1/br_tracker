@@ -1,16 +1,59 @@
 {% extends "base.html" %}
-{% load i18n %}
-{% block title %}{% trans "Stock Dashboard" %}{% endblock %}
+{% load i18n crispy_forms_tags static %}
+
+{% block title %}{% trans "Dashboard" %}{% endblock %}
+
 {% block content %}
-<h1>{% trans "Bale Stock" %}</h1>
-<form hx-get="{% url 'tracker:bale_list' %}" hx-target="#bale-table-body" hx-swap="innerHTML" class="grid grid-4">
-  {{ search_form.as_p }}
-  <button type="submit">{% trans "Search" %}</button>
+<h1>{% trans "Bale Search" %}</h1>
+
+<form method="get" 
+      hx-get="{% url 'tracker:bale_list' %}" 
+      hx-target="#bale-table-body" 
+      hx-swap="innerHTML"
+      class="search-form">
+  
+  {% crispy search_form %}
+  
 </form>
+
 <div id="bale-table-body">
   {% include 'tracker/partials/bale_table.html' %}
 </div>
+
 {% if is_br_clerk %}
   <a href="{% url 'tracker:bale_create' %}" class="btn">{% trans "Add Bale" %}</a>
 {% endif %}
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const toggleBtn = document.getElementById('toggle-advanced');
+  const advancedFilters = document.getElementById('advanced-filters');
+  
+  toggleBtn.addEventListener('click', () => {
+    advancedFilters.classList.toggle('hidden');
+    toggleBtn.textContent = advancedFilters.classList.contains('hidden') 
+      ? '{% trans "Search by Other" %}' 
+      : '{% trans "Hide Filters" %}';
+  });
+});
+</script>
+
+<style>
+.advanced-filters.hidden { display: none; }
+.advanced-filters {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-subtle);
+}
+.help-text {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+.grid { display: grid; gap: 1rem; }
+.grid-2 { grid-template-columns: 1fr 1fr; }
+@media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+</style>
 {% endblock %}

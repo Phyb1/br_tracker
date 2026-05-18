@@ -35,7 +35,7 @@ class CollectionDeptRequiredMixin(UserPassesTestMixin):
     def handle_no_permission(self):
         return HttpResponse("Forbidden: Collection Dept access required", status=403)
 
-class BaleListView(LoginRequiredMixin, ListView):
+class BaleListView( ListView):
     """
     Display a filterable, paginated list of bales.
     
@@ -73,7 +73,7 @@ class BaleListView(LoginRequiredMixin, ListView):
             return render(self.request, 'tracker/partials/bale_table.html', context)
         return super().render_to_response(context)
 
-class BaleDetailView(LoginRequiredMixin, DetailView):
+class BaleDetailView( DetailView):
     """Display detailed view of a single bale including history."""
     model = Bale
     template_name = 'tracker/bale_detail.html'
