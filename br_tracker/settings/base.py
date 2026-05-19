@@ -114,5 +114,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Login URLs
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'tracker:bale_search'
-LOGOUT_REDIRECT_URL = 'tracker:bale_search'
+LOGIN_REDIRECT_URL = 'tracker:bale_list'
+LOGOUT_REDIRECT_URL = 'tracker:bale_list'

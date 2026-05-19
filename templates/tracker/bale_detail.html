@@ -1,11 +1,87 @@
 {% extends "base.html" %}
-{% block content %}
-<h2>{% if object %}Edit{% else %}Add{% endif %} Bale</h2>
+{% load i18n humanize %}
 
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit" class="btn btn-primary">Save</button>
-  <a href="{% url 'tracker:bale_list' %}" class="btn btn-secondary">Cancel</a>
-</form>
+{% block title %}{% trans "Bale" %} {{ object.barcode }}{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 800px; margin: 0 auto;">
+  
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem;">
+    <div>
+      <h2 style="margin: 0 0 0.5rem 0;">{{ object.barcode }}</h2>
+      <span style="padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600;
+        {% if object.status == 'InStock' %}background: rgba(56, 142, 60, 0.15); color: var(--success);
+        {% elif object.status == 'Reserved' %}background: rgba(245, 124, 0, 0.15); color: var(--warning);
+        {% else %}background: rgba(100, 116, 139, 0.15); color: var(--text-muted);
+        {% endif %}">
+        {{ object.get_status_display }}
+      </span>
+    </div>
+    
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+      <a href="{% url 'tracker:bale_edit' object.pk %}" class="btn" style="background: var(--primary); color: white;">
+        {% trans "Edit" %}
+      </a>
+      <a href="{% url 'tracker:bale_list' %}" class="btn" style="background: var(--bg-secondary); color: var(--text);">
+        {% trans "Back" %}
+      </a>
+    </div>
+  </div>
+
+  <div class="grid grid-2">
+    <div>
+      <h3 style="font-size: 1rem; color: var(--text-muted); margin-bottom: 0.75rem;">{% trans "Details" %}</h3>
+      <dl style="margin: 0;">
+        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border);">
+          <dt style="color: var(--text-muted);">{% trans "Grower No" %}</dt>
+          <dd style="margin: 0; font-weight: 500;">{{ object.grower_no|default:"-" }}</dd>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border);">
+          <dt style="color: var(--text-muted);">{% trans "Lot No" %}</dt>
+          <dd style="margin: 0; font-weight: 500;">{{ object.lot_no|default:"-" }}</dd>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border);">
+          <dt style="color: var(--text-muted);">{% trans "Mass" %}</dt>
+          <dd style="margin: 0; font-weight: 500;">{{ object.mass|floatformat:2 }} kg</dd>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+          <dt style="color: var(--text-muted);">{% trans "Reason" %}</dt>
+          <dd style="margin: 0; font-weight: 500;">{{ object.get_reason_display }}</dd>
+        </div>
+      </dl>
+    </div>
+
+    <div>
+      <h3 style="font-size: 1rem; color: var(--text-muted); margin-bottom: 0.75rem;">{% trans "Location" %}</h3>
+      <dl style="margin: 0;">
+        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border);">
+          <dt style="color: var(--text-muted);">{% trans "Floor" %}</dt>
+          <dd style="margin: 0; font-weight: 500;">{{ object.floor }}</dd>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border);">
+          <dt style="color: var(--text-muted);">{% trans "Row" %}</dt>
+          <dd style="margin: 0; font-weight: 500;">{{ object.row }}</dd>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid var(--border);">
+          <dt style="color: var(--text-muted);">{% trans "Side" %}</dt>
+          <dd style="margin: 0; font-weight: 500;">{{ object.get_side_display }}</dd>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+          <dt style="color: var(--text-muted);">{% trans "Level" %}</dt>
+          <dd style="margin: 0; font-weight: 500;">{{ object.level }}</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+
+  {% if object.reason_notes %}
+  <div style="margin-top: 1.5rem;">
+    <h3 style="font-size: 1rem; color: var(--text-muted); margin-bottom: 0.75rem;">{% trans "Notes" %}</h3>
+    <div style="background: var(--bg-secondary); padding: 1rem; border-radius: var(--radius);">
+      {{ object.reason_notes }}
+    </div>
+  </div>
+  {% endif %}
+
+</div>
 {% endblock %}

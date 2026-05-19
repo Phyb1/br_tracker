@@ -1,14 +1,84 @@
 {% extends "base.html" %}
 {% load i18n %}
+
 {% block title %}{% trans "Metrics Dashboard" %}{% endblock %}
+
 {% block content %}
-<h1>{% trans "BR Bale Metrics" %}</h1>
-<form method="get" hx-get="{% url 'tracker:metrics' %}" hx-target="#metrics-content" hx-swap="innerHTML" class="grid grid-3">
-  <input type="date" name="start" value="{{ start_date }}">
-  <input type="date" name="end" value="{{ end_date }}">
-  <button type="submit">{% trans "Update" %}</button>
+<h1 style="margin-top: 0;">{% trans "BR Bale Metrics" %}</h1>
+
+<form method="get" 
+      hx-get="{% url 'tracker:metrics' %}" 
+      hx-target="#metrics-content" 
+      hx-swap="innerHTML"
+      hx-indicator="#metrics-spinner"
+      class="card"
+      style="margin-bottom: 1.5rem;">
+  
+  <div class="grid grid-3" style="align-items: end;">
+    <div>
+      <label for="id_start" style="display: block; font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+        {% trans "Start Date" %}
+      </label>
+      <input type="date" id="id_start" name="start" value="{{ start_date }}">
+    </div>
+    
+    <div>
+      <label for="id_end" style="display: block; font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+        {% trans "End Date" %}
+      </label>
+      <input type="date" id="id_end" name="end" value="{{ end_date }}">
+    </div>
+    
+    <div>
+      <button type="submit" style="width: 100%;">{% trans "Update" %}</button>
+      <div id="metrics-spinner" class="htmx-indicator" style="margin-top: 0.5rem; font-size: 0.875rem; color: var(--text-muted);">
+        {% trans "Loading..." %}
+      </div>
+    </div>
+  </div>
 </form>
+
 <div id="metrics-content">
   {% include 'tracker/partials/metrics_panel.html' %}
 </div>
+
+<style>
+/* HTMX loading indicator */
+.htmx-indicator {
+  opacity: 0;
+  transition: opacity 200ms ease-in;
+}
+
+.htmx-request .htmx-indicator {
+  opacity: 1;
+}
+
+.htmx-request.htmx-indicator {
+  opacity: 1;
+}
+
+/* Make date inputs match theme */
+input[type="date"] {
+  width: 100%;
+  padding: 0.625rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  color: var(--text);
+  font-family: inherit;
+}
+
+input[type="date"]:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(44, 95, 45, 0.1);
+}
+
+/* Responsive collapse */
+@media (max-width: 768px) {
+  .grid-3 {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
 {% endblock %}

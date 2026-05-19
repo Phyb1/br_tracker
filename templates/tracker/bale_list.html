@@ -4,30 +4,46 @@
 {% block title %}{% trans "Dashboard" %}{% endblock %}
 
 {% block content %}
-<h1>{% trans "Bale Search" %}</h1>
+<h1 style="margin-top: 0;">{% trans "Bale Search" %}</h1>
 
 <form method="get" 
       hx-get="{% url 'tracker:bale_list' %}" 
-      hx-target="#bale-table-body" 
+      hx-target="#bale-table-wrapper" 
       hx-swap="innerHTML"
-      class="search-form">
+      hx-indicator="#search-spinner"
+      class="search-form card"
+      style="margin-bottom: 1.5rem;">
   
   {% crispy search_form %}
   
+  <div id="search-spinner" class="htmx-indicator" style="margin-top: 1rem; color: var(--text-muted);">
+    {% trans "Searching..." %}
+  </div>
 </form>
 
-<div id="bale-table-body">
-  {% include 'tracker/partials/bale_table.html' %}
+<div id="bale-table-wrapper">
+  {% if has_searched %}
+    {% include 'tracker/partials/bale_table.html' %}
+  {% else %}
+    <div class="empty-state">
+      <p>{% trans "Enter search criteria above to find bales." %}</p>
+    </div>
+  {% endif %}
 </div>
 
 {% if is_br_clerk %}
-  <a href="{% url 'tracker:bale_create' %}" class="btn">{% trans "Add Bale" %}</a>
+  <div style="margin-top: 2rem;">
+    <a href="{% url 'tracker:bale_create' %}" class="btn">{% trans "Add Bale" %}</a>
+  </div>
 {% endif %}
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const toggleBtn = document.getElementById('toggle-advanced');
+  if (!toggleBtn) return;
+  
   const advancedFilters = document.getElementById('advanced-filters');
+  if (!advancedFilters) return;
   
   toggleBtn.addEventListener('click', () => {
     advancedFilters.classList.toggle('hidden');
@@ -39,21 +55,60 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 
 <style>
-.advanced-filters.hidden { display: none; }
+.empty-state { 
+  text-align: center; 
+  padding: 3rem 2rem; 
+  color: var(--text-muted); 
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+}
+
+.advanced-filters.hidden { 
+  display: none; 
+}
+
 .advanced-filters {
   margin-top: 1rem;
-  padding: 1rem;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background: var(--bg-subtle);
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-secondary);
 }
+
 .help-text {
   font-size: 0.875rem;
   color: var(--text-muted);
   margin-top: 0.25rem;
 }
-.grid { display: grid; gap: 1rem; }
-.grid-2 { grid-template-columns: 1fr 1fr; }
-@media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+
+.grid { 
+  display: grid; 
+  gap: 1rem; 
+}
+
+.grid-2 { 
+  grid-template-columns: 1fr 1fr; 
+}
+
+@media (max-width: 640px) { 
+  .grid-2 { 
+    grid-template-columns: 1fr; 
+  } 
+}
+
+/* HTMX loading indicator */
+.htmx-indicator {
+  opacity: 0;
+  transition: opacity 200ms ease-in;
+}
+
+.htmx-request .htmx-indicator {
+  opacity: 1;
+}
+
+.htmx-request.htmx-indicator {
+  opacity: 1;
+}
 </style>
 {% endblock %}

@@ -1,25 +1,102 @@
 {% load i18n humanize %}
+
 <div class="grid grid-4">
-  <div class="card"><div>{% trans "Intake" %}</div><h2>{{ metrics.intake }}</h2></div>
-  <div class="card"><div>{% trans "Collected" %}</div><h2>{{ metrics.outflow }}</h2></div>
-  <div class="card"><div>{% trans "Net Change" %}</div><h2>{{ metrics.net_change }}</h2></div>
-  <div class="card"><div>{% trans "Ratio" %}</div><h2>{{ metrics.ratio }}</h2></div>
+  <div class="card" style="text-align: center;">
+    <div style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+      {% trans "Intake" %}
+    </div>
+    <h2 style="margin: 0; font-size: 2rem; color: var(--success);">
+      {{ metrics.intake|intcomma|default:0 }}
+    </h2>
+  </div>
+  
+  <div class="card" style="text-align: center;">
+    <div style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+      {% trans "Collected" %}
+    </div>
+    <h2 style="margin: 0; font-size: 2rem; color: var(--primary);">
+      {{ metrics.outflow|intcomma|default:0 }}
+    </h2>
+  </div>
+  
+  <div class="card" style="text-align: center;">
+    <div style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+      {% trans "Net Change" %}
+    </div>
+    <h2 style="margin: 0; font-size: 2rem; 
+               color: {% if metrics.net_change >= 0 %}var(--success){% else %}var(--danger){% endif %};">
+      {{ metrics.net_change|intcomma|default:0 }}
+    </h2>
+  </div>
+  
+  <div class="card" style="text-align: center;">
+    <div style="font-size: 0.875rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+      {% trans "Ratio" %}
+    </div>
+    <h2 style="margin: 0; font-size: 2rem; color: var(--text);">
+      {{ metrics.ratio|floatformat:2|default:"0.00" }}
+    </h2>
+  </div>
 </div>
+
 <div class="grid grid-2" style="margin-top: 2rem;">
+  
   <div class="card">
-    <h3>{% trans "Defect Breakdown" %}</h3>
-    <table>
-      {% for d in defects %}
-      <tr><td>{{ d.get_reason_display }}</td><td>{{ d.count }}</td></tr>
-      {% endfor %}
-    </table>
+    <h3 style="margin-top: 0; margin-bottom: 1rem;">{% trans "Defect Breakdown" %}</h3>
+    
+    {% if defects %}
+    <div style="overflow-x: auto;">
+      <table style="font-size: 0.875rem;">
+        <thead>
+          <tr>
+            <th>{% trans "Reason" %}</th>
+            <th style="text-align: right;">{% trans "Count" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for d in defects %}
+          <tr>
+            <td>{{ d.get_reason_display }}</td>
+            <td style="text-align: right; font-weight: 600;">{{ d.count|intcomma }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p style="color: var(--text-muted); text-align: center; padding: 2rem 0; margin: 0;">
+      {% trans "No defects recorded in this period." %}
+    </p>
+    {% endif %}
   </div>
+  
   <div class="card">
-    <h3>{% trans "Stock by Floor" %}</h3>
-    <table>
-      {% for s in stock_by_floor %}
-      <tr><td>{% trans "Floor" %} {{ s.floor }}</td><td>{{ s.count }}</td></tr>
-      {% endfor %}
-    </table>
+    <h3 style="margin-top: 0; margin-bottom: 1rem;">{% trans "Stock by Floor" %}</h3>
+    
+    {% if stock_by_floor %}
+    <div style="overflow-x: auto;">
+      <table style="font-size: 0.875rem;">
+        <thead>
+          <tr>
+            <th>{% trans "Floor" %}</th>
+            <th style="text-align: right;">{% trans "Bales" %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in stock_by_floor %}
+          <tr>
+            <td>{% trans "Floor" %} {{ s.floor }}</td>
+            <td style="text-align: right; font-weight: 600;">{{ s.count|intcomma }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p style="color: var(--text-muted); text-align: center; padding: 2rem 0; margin: 0;">
+      {% trans "No stock data available." %}
+    </p>
+    {% endif %}
   </div>
+
 </div>

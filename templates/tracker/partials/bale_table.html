@@ -1,22 +1,51 @@
 {% load i18n %}
-<div class="hide-mobile">
-  <table>
+
+{% if bales %}
+<div class="card" style="overflow-x: auto; padding: 0;">
+  <table style="margin: 0;">
     <thead>
-      <tr><th>{% trans "Barcode" %}</th><th>{% trans "Grower" %}</th><th>{% trans "Location" %}</th><th>{% trans "Status" %}</th><th>{% trans "Actions" %}</th></tr>
+      <tr>
+        <th>{% trans "Barcode" %}</th>
+        <th>{% trans "Grower" %}</th>
+        <th>{% trans "Location" %}</th>
+        <th>{% trans "Status" %}</th>
+        <th>{% trans "Actions" %}</th>
+      </tr>
     </thead>
     <tbody id="bale-table-body">
       {% for bale in bales %}
         {% include 'tracker/partials/bale_row.html' %}
-      {% empty %}
-        <tr><td colspan="5" class="text-center">{% trans "No bales found" %}</td></tr>
       {% endfor %}
     </tbody>
   </table>
 </div>
-<div class="show-mobile">
-  {% for bale in bales %}
-    {% include 'tracker/partials/bale_card.html' %}
-  {% empty %}
-    <div class="card">{% trans "No bales found" %}</div>
-  {% endfor %}
+
+{% if is_paginated %}
+<div style="margin-top: 1.5rem; display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+  {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}" 
+       class="btn" 
+       style="background: var(--bg-secondary); color: var(--text);">
+      {% trans "Prev" %}
+    </a>
+  {% endif %}
+  
+  <span style="padding: 0.625rem 1.25rem; color: var(--text-muted);">
+    {% trans "Page" %} {{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}
+  </span>
+  
+  {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}" 
+       class="btn" 
+       style="background: var(--bg-secondary); color: var(--text);">
+      {% trans "Next" %}
+    </a>
+  {% endif %}
 </div>
+{% endif %}
+
+{% else %}
+<div class="empty-state">
+  <p>{% trans "No bales found matching your search." %}</p>
+</div>
+{% endif %}

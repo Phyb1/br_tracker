@@ -1,12 +1,42 @@
+{% load i18n %}
+
 <tr id="bale-{{ bale.id }}">
-  <td>{{ bale.barcode }}</td>
-  <td>{{ bale.grower_no }}</td>
+  <td><strong>{{ bale.barcode }}</strong></td>
+  
+  <td>{{ bale.grower_no|default:"-" }}</td>
+  
   <td>{{ bale.location_display }}</td>
-  <td>{{ bale.get_status_display }}</td>
+  
+  <td>
+    <span style="padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600;
+      {% if bale.status == 'InStock' %}background: rgba(56, 142, 60, 0.15); color: var(--success);
+      {% elif bale.status == 'Reserved' %}background: rgba(245, 124, 0, 0.15); color: var(--warning);
+      {% else %}background: rgba(100, 116, 139, 0.15); color: var(--text-muted);
+      {% endif %}">
+      {{ bale.get_status_display }}
+    </span>
+  </td>
+  
   <td>
     {% if bale.is_available and is_collection %}
-      <button hx-post="{% url 'tracker:bale_reserve' bale.pk %}" hx-target="#bale-{{ bale.id }}" hx-swap="outerHTML">{% trans "Reserve" %}</button>
-      <button hx-post="{% url 'tracker:bale_collect' bale.pk %}" hx-target="#bale-{{ bale.id }}" hx-swap="outerHTML">{% trans "Collect" %}</button>
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <button 
+          hx-post="{% url 'tracker:bale_reserve' bale.pk %}" 
+          hx-target="#bale-{{ bale.id }}" 
+          hx-swap="outerHTML"
+          style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+          {% trans "Reserve" %}
+        </button>
+        <button 
+          hx-post="{% url 'tracker:bale_collect' bale.pk %}" 
+          hx-target="#bale-{{ bale.id }}" 
+          hx-swap="outerHTML"
+          style="padding: 0.5rem 1rem; font-size: 0.875rem; background: var(--success);">
+          {% trans "Collect" %}
+        </button>
+      </div>
+    {% else %}
+      <span style="color: var(--text-muted); font-size: 0.875rem;">-</span>
     {% endif %}
   </td>
 </tr>

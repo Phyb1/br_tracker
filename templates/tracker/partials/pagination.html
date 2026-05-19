@@ -1,37 +1,53 @@
-{% if is_paginated %}
-<nav aria-label="Page navigation">
-  <ul class="pagination justify-content-center">
+{% load i18n %}
 
+{% if is_paginated %}
+<nav aria-label="{% trans 'Page navigation' %}" style="margin-top: 1.5rem;">
+  <div style="display: flex; gap: 0.5rem; justify-content: center; align-items: center; flex-wrap: wrap;">
+    
     {% if page_obj.has_previous %}
-      <li class="page-item">
-        <a class="page-link" href="?page=1{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">First</a>
-      </li>
-      <li class="page-item">
-        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Previous</a>
-      </li>
+      <a href="?page=1{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+         class="btn" 
+         style="background: var(--bg-secondary); color: var(--text); padding: 0.5rem 1rem; font-size: 0.875rem;">
+        {% trans "First" %}
+      </a>
+      <a href="?page={{ page_obj.previous_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+         class="btn" 
+         style="background: var(--bg-secondary); color: var(--text); padding: 0.5rem 1rem; font-size: 0.875rem;">
+        {% trans "Previous" %}
+      </a>
     {% else %}
-      <li class="page-item disabled"><span class="page-link">First</span></li>
-      <li class="page-item disabled"><span class="page-link">Previous</span></li>
+      <span class="btn" style="background: var(--bg-secondary); color: var(--text-muted); padding: 0.5rem 1rem; font-size: 0.875rem; opacity: 0.5; pointer-events: none;">
+        {% trans "First" %}
+      </span>
+      <span class="btn" style="background: var(--bg-secondary); color: var(--text-muted); padding: 0.5rem 1rem; font-size: 0.875rem; opacity: 0.5; pointer-events: none;">
+        {% trans "Previous" %}
+      </span>
     {% endif %}
 
-    <li class="page-item disabled">
-      <span class="page-link">
-        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-      </span>
-    </li>
+    <span style="padding: 0.5rem 1rem; color: var(--text-muted); font-size: 0.875rem;">
+      {% trans "Page" %} {{ page_obj.number }} {% trans "of" %} {{ page_obj.paginator.num_pages }}
+    </span>
 
     {% if page_obj.has_next %}
-      <li class="page-item">
-        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Next</a>
-      </li>
-      <li class="page-item">
-        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Last</a>
-      </li>
+      <a href="?page={{ page_obj.next_page_number }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+         class="btn" 
+         style="background: var(--bg-secondary); color: var(--text); padding: 0.5rem 1rem; font-size: 0.875rem;">
+        {% trans "Next" %}
+      </a>
+      <a href="?page={{ page_obj.paginator.num_pages }}{% for key,value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" 
+         class="btn" 
+         style="background: var(--bg-secondary); color: var(--text); padding: 0.5rem 1rem; font-size: 0.875rem;">
+        {% trans "Last" %}
+      </a>
     {% else %}
-      <li class="page-item disabled"><span class="page-link">Next</span></li>
-      <li class="page-item disabled"><span class="page-link">Last</span></li>
+      <span class="btn" style="background: var(--bg-secondary); color: var(--text-muted); padding: 0.5rem 1rem; font-size: 0.875rem; opacity: 0.5; pointer-events: none;">
+        {% trans "Next" %}
+      </span>
+      <span class="btn" style="background: var(--bg-secondary); color: var(--text-muted); padding: 0.5rem 1rem; font-size: 0.875rem; opacity: 0.5; pointer-events: none;">
+        {% trans "Last" %}
+      </span>
     {% endif %}
 
-  </ul>
+  </div>
 </nav>
 {% endif %}

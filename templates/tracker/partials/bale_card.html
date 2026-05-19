@@ -1,12 +1,26 @@
 {% load i18n %}
+
 <div class="card" id="bale-card-{{ bale.id }}">
-  <strong>{{ bale.barcode }}</strong> - {{ bale.grower_no }}
-  <div>{{ bale.location_display }}</div>
-  <div>{% trans "Status" %}: {{ bale.get_status_display }}</div>
-  {% if bale.is_available and is_collection %}
-  <div style="margin-top: 0.5rem;">
-    <button hx-post="{% url 'tracker:bale_reserve' bale.pk %}" hx-target="#bale-card-{{ bale.id }}" hx-swap="outerHTML">{% trans "Reserve" %}</button>
-    <button hx-post="{% url 'tracker:bale_collect' bale.pk %}" hx-target="#bale-card-{{ bale.id }}" hx-swap="outerHTML">{% trans "Collect" %}</button>
-  </div>
-  {% endif %}
-</div>
+  <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap;">
+    
+    <div style="flex: 1; min-width: 0;">
+      <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; flex-wrap: wrap;">
+        <strong style="font-size: 1.125rem;">{{ bale.barcode }}</strong>
+        
+        <span style="padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600;
+          {% if bale.status == 'InStock' %}background: rgba(56, 142, 60, 0.15); color: var(--success);
+          {% elif bale.status == 'Reserved' %}background: rgba(245, 124, 0, 0.15); color: var(--warning);
+          {% else %}background: rgba(100, 116, 139, 0.15); color: var(--text-muted);
+          {% endif %}">
+          {{ bale.get_status_display }}
+        </span>
+      </div>
+      
+      <div style="color: var(--text-muted); font-size: 0.875rem;">
+        <div style="margin-bottom: 0.25rem;">
+          <span style="color: var(--text); font-weight: 500;">{% trans "Grower" %}:</span> 
+          {{ bale.grower_no|default:"-" }}
+        </div>
+        <div>
+          <span style="color: var(--text); font-weight: 500;">{% trans "Location" %}:</span> 
+          {{ bale

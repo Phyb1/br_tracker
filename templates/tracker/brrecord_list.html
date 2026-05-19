@@ -1,26 +1,54 @@
 {% extends "base.html" %}
-{% block content %}
-<h2>BR Records</h2>
-<a href="{% url 'tracker:brrecord_create' %}" class="btn btn-primary mb-3">Add BR</a>
+{% load i18n humanize %}
 
-<table class="table">
-  <thead>
-    <tr><th>BR No</th><th>Sale Date</th><th>Bales</th><th>Mass</th><th>Recorded by</th></tr>
-  </thead>
-  <tbody>
-    {% for br in object_list %}
-    <tr>
-      <td>{{ br.br_number }}</td>
-      <td>{{ br.sale_date }}</td>
-      <td>{{ br.total_bales }}</td>
-      <td>{{ br.total_mass }}</td>
-      <td>{{ br.recorded_by }}</td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="5">No BR records</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
+{% block title %}{% trans "BR Records" %}{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+  <h2 style="margin: 0;">{% trans "BR Records" %}</h2>
+  <a href="{% url 'tracker:brrecord_create' %}" class="btn" style="background: var(--primary); color: white;">
+    {% trans "Add BR" %}
+  </a>
+</div>
+
+{% if object_list %}
+<div class="card" style="overflow-x: auto; padding: 0;">
+  <table style="margin: 0;">
+    <thead>
+      <tr>
+        <th>{% trans "BR No" %}</th>
+        <th>{% trans "Sale Date" %}</th>
+        <th style="text-align: right;">{% trans "Bales" %}</th>
+        <th style="text-align: right;">{% trans "Mass (kg)" %}</th>
+        <th>{% trans "Recorded by" %}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for br in object_list %}
+      <tr>
+        <td>
+          <a href="{% url 'tracker:brrecord_detail' br.pk %}" style="color: var(--primary); text-decoration: none; font-weight: 500;">
+            {{ br.br_number }}
+          </a>
+        </td>
+        <td>{{ br.sale_date }}</td>
+        <td style="text-align: right;">{{ br.total_bales|intcomma|default:0 }}</td>
+        <td style="text-align: right;">{{ br.total_mass|floatformat:2|default:"0.00" }}</td>
+        <td>{{ br.recorded_by.get_full_name|default:br.recorded_by.username }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 
 {% include "tracker/partials/pagination.html" %}
+
+{% else %}
+<div class="empty-state">
+  <p>{% trans "No BR records yet." %}</p>
+  <a href="{% url 'tracker:brrecord_create' %}" class="btn" style="background: var(--primary); color: white; margin-top: 1rem;">
+    {% trans "Create your first BR" %}
+  </a>
+</div>
+{% endif %}
 {% endblock %}

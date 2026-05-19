@@ -6,10 +6,253 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}{% trans "BR Bale Tracker" %}{% endblock %} - TSF Mvurwi</title>
   
-  <link rel="stylesheet" href="{% static 'css/main.css' %}">
-  
   <script src="https://unpkg.com/htmx.org@1.9.10" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+  
+  <style>
+    :root {
+      --bg: #ffffff; 
+      --bg-secondary: #f8fafc; 
+      --text: #1a1a1a; 
+      --border: #e2e8f0;
+      --primary: #2c5f2d; 
+      --primary-hover: #1e421f; 
+      --danger: #d32f2f;
+      --success: #388e3c; 
+      --warning: #f57c00; 
+      --text-muted: #64748b;
+      --shadow: 0 1px 3px 0 rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+      --radius: 8px;
+      --radius-lg: 12px;
+    }
+    
+    [data-theme="dark"] {
+      --bg: #0f172a; 
+      --bg-secondary: #1e293b; 
+      --text: #e2e8f0; 
+      --border: #334155;
+      --primary: #4ade80; 
+      --danger: #f87171; 
+      --success: #4ade80; 
+      --warning: #fbbf24;
+      --text-muted: #94a3b8;
+      --shadow: 0 1px 3px 0 rgba(0,0,0,0.3);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.3);
+    }
+
+    * { box-sizing: border-box; }
+
+    body { 
+      font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+      background: var(--bg); 
+      color: var(--text); 
+      margin: 0; 
+      line-height: 1.6;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .container { 
+      width: 90%; 
+      max-width: 1280px; 
+      margin: 0 auto; 
+      padding: 1.5rem 0; 
+    }
+
+    .navbar { 
+      background: var(--bg-secondary); 
+      border-bottom: 1px solid var(--border); 
+      padding: 1rem 0; 
+      position: sticky; 
+      top: 0; 
+      backdrop-filter: blur(8px);
+      z-index: 50;
+      box-shadow: var(--shadow);
+    }
+
+    .navbar .container { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      flex-wrap: wrap; 
+      gap: 1rem; 
+    }
+
+    .brand { 
+      font-size: 1.25rem; 
+      font-weight: 700; 
+      color: var(--primary); 
+      text-decoration: none; 
+      letter-spacing: -0.025em;
+    }
+
+    .nav-links { 
+      display: flex; 
+      gap: 1.5rem; 
+      align-items: center; 
+    }
+
+    .nav-links a, .btn-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .nav-links a:hover, .btn-link:hover {
+      color: var(--primary);
+    }
+
+    .user-info {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    #theme-toggle {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.5rem;
+      cursor: pointer;
+      font-size: 1.25rem;
+      transition: all 0.2s;
+    }
+
+    #theme-toggle:hover {
+      background: var(--bg);
+      transform: scale(1.05);
+    }
+
+    table { 
+      width: 100%; 
+      border-collapse: separate;
+      border-spacing: 0;
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    th, td { 
+      padding: 1rem; 
+      border-bottom: 1px solid var(--border); 
+      text-align: left; 
+    }
+
+    th {
+      background: var(--bg);
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: var(--bg);
+    }
+
+    button, .btn { 
+      background: var(--primary); 
+      color: white; 
+      border: none; 
+      padding: 0.625rem 1.25rem; 
+      border-radius: var(--radius); 
+      cursor: pointer; 
+      font-weight: 600;
+      transition: all 0.2s;
+      box-shadow: var(--shadow);
+    }
+
+    button:hover, .btn:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .grid { 
+      display: grid; 
+      grid-template-columns: 1fr; 
+      gap: 1.5rem; 
+    }
+
+    @media (min-width: 768px) { 
+      .grid-2 { grid-template-columns: repeat(2, 1fr); } 
+      .grid-3 { grid-template-columns: repeat(3, 1fr); } 
+      .grid-4 { grid-template-columns: repeat(4, 1fr); } 
+    }
+
+    .card { 
+      background: var(--bg-secondary); 
+      border: 1px solid var(--border); 
+      border-radius: var(--radius-lg); 
+      padding: 1.5rem; 
+      box-shadow: var(--shadow);
+      transition: box-shadow 0.2s;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-lg);
+    }
+
+    .alert { 
+      padding: 1rem 1.25rem; 
+      margin: 1rem 0; 
+      border-radius: var(--radius); 
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .alert-success { 
+      background: var(--success); 
+      color: white; 
+    }
+
+    .alert-error { 
+      background: var(--danger); 
+      color: white; 
+    }
+
+    .alert-warning {
+      background: var(--warning);
+      color: white;
+    }
+
+    .hide-mobile { display: none; }
+    .show-mobile { display: block; }
+    
+    @media (min-width: 768px) { 
+      .hide-mobile { display: block; } 
+      .show-mobile { display: none; } 
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 0.625rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg);
+      color: var(--text);
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(44, 95, 45, 0.1);
+    }
+  </style>
 </head>
 <body>
   <header class="navbar">
@@ -48,6 +291,20 @@
     {% block content %}{% endblock %}
   </main>
 
-  <script src="{% static 'js/main.js' %}"></script>
+  <script>
+    // Theme toggle
+    const toggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    html.setAttribute('data-theme', savedTheme);
+    
+    toggle.addEventListener('click', () => {
+      const current = html.getAttribute('data-theme');
+      const next = current === 'light' ? 'dark' : 'light';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    });
+  </script>
 </body>
 </html>
