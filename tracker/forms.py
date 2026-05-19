@@ -16,8 +16,22 @@ class BRRecordForm(forms.ModelForm):
             'sale_date': 'Date of auction sale',
             'received_date': 'Timestamp when bales arrived at TSF',
             'total_bales': 'Expected count from BR doc. Optional',
-            'total_mass': 'Expected mass in kg. Optional',
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.layout = Layout(
+            Div(
+                Field('br_number'),
+                Field('sale_date'),
+                Field('received_date'),
+                Field('total_bales'),
+                Field('notes'),
+                css_class='grid grid-2'
+            )
+        )
 
 class BaleForm(forms.ModelForm):
     class Meta:
@@ -40,7 +54,7 @@ class BaleForm(forms.ModelForm):
         widgets = {
             'date_received': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
             'reason_notes': forms.Textarea(attrs={'rows': 2, 'placeholder': 'Required for defects'}),
-            'barcode': forms.TextInput(attrs={'placeholder': 'Scan or type barcode'}),
+            'barcode': forms.TextInput(attrs={'placeholder': 'Scan or type barcode', 'autofocus': True}),
             'mass': forms.NumberInput(attrs={'step': '0.01', 'min': '0.01'}),
         }
         help_texts = {
@@ -59,7 +73,7 @@ class BaleForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Only 3 fields mandatory per your requirement
+        # Only 3 fields mandatory
         self.fields['grower_no'].required = True
         self.fields['lot_no'].required = True
         self.fields['mass'].required = True
@@ -77,6 +91,37 @@ class BaleForm(forms.ModelForm):
         self.fields['level'].initial = 1
         self.fields['row'].initial = 1
 
+        # Crispy layout
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.layout = Layout(
+            Div(
+                Field('barcode'),
+                Field('br_record'),
+                css_class='grid grid-2'
+            ),
+            Div(
+                Field('grower_no'),
+                Field('lot_no'),
+                Field('mass'),
+                Field('reason'),
+                css_class='grid grid-2'
+            ),
+            Field('reason_notes'),
+            Div(
+                Field('floor'),
+                Field('row'),
+                Field('side'),
+                Field('level'),
+                css_class='grid grid-4'
+            ),
+            Div(
+                Field('status'),
+                Field('date_received'),
+                css_class='grid grid-2'
+            )
+        )
+
     def clean(self):
         cleaned_data = super().clean()
         reason = cleaned_data.get('reason')
@@ -92,66 +137,92 @@ class BaleSearchForm(forms.Form):
     grower_no = forms.CharField(
         max_length=20,
         required=False,
+        label='Grower No',
         help_text="Enter grower number to search"
     )
     status = forms.ChoiceField(
         choices=[('', 'All')] + list(BaleStatus.choices),
         required=False,
+        label='Status',
         help_text="Filter by bale status"
     )
     floor = forms.ChoiceField(
         choices=[('', 'All')] + list(Floor.choices),
         required=False,
+        label='Floor',
         help_text="Search across all floors by default"
     )
     row = forms.IntegerField(
         required=False,
         min_value=1,
+        label='Row',
         help_text="Filter by row number"
     )
     side = forms.ChoiceField(
         choices=[('', 'All')] + list(Side.choices),
         required=False,
+        label='Side',
         help_text="Filter by side"
     )
     level = forms.IntegerField(
         required=False,
         min_value=1,
+        label='Level',
         help_text="Filter by level"
     )
     reason = forms.ChoiceField(
         choices=[('', 'All')] + list(BaleReason.choices),
         required=False,
+        label='Reason',
         help_text="Filter by bale reason"
     )
     barcode = forms.CharField(
         max_length=50,
         required=False,
+        label='Barcode',
         help_text="Scan or enter barcode"
     )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         self.helper = FormHelper()
         self.helper.form_method = 'get'
-        self.helper.form_attr = {
-            'hx-get': '/tracker/bales/',
-            'hx-target': '#bale-table-body',
-            'hx-swap': 'innerHTML'
-        }
+        self.helper.disable_csrf = True
+
         self.helper.layout = Layout(
-            Div(Field('grower_no', css_class='input'), css_class='grid-col-1'),
+            # Only grower_no visible by default
+            Field('grower_no'),
+
+            # Advanced filters toggle
+            HTML('<button type="button" class="btn" id="toggle-advanced" style="background: var(--bg-secondary); color: var(--text); margin-top: 1rem; width: auto;">Advanced Filters</button>'),
+
+            # Hidden advanced filters
             Div(
-                Div(Field('status'), Field('floor'), css_class='grid grid-2'),
-                Div(Field('row'), Field('side'), css_class='grid grid-2'),
-                Div(Field('level'), Field('reason'), css_class='grid grid-2'),
-                Div(Field('barcode'), css_class='grid grid-1'),
+                Field('barcode'),
+                Div(
+                    Field('status'),
+                    Field('floor'),
+                    css_class='grid grid-2'
+                ),
+                Div(
+                    Field('row'),
+                    Field('side'),
+                    css_class='grid grid-2'
+                ),
+                Div(
+                    Field('level'),
+                    Field('reason'),
+                    css_class='grid grid-2'
+                ),
                 css_class='advanced-filters hidden',
                 id='advanced-filters'
             ),
+
+            # Submit button
             Div(
-                Submit('submit', 'Search', css_class='btn btn-primary'),
-                HTML('<button type="button" class="btn btn-ghost" id="toggle-advanced">Search by Other</button>'),
-                css_class='form-actions'
+                Submit('submit', 'Search', css_class='btn'),
+                css_class='form-actions',
+                style='margin-top: 1.5rem;'
             )
         )

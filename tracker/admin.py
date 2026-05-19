@@ -5,6 +5,11 @@ from django.contrib import admin
 from django.utils.html import format_html
 from .models import Bale, BRRecord, BaleHistory
 
+# --- Branding ---
+admin.site_header = "TSF Mvurwi - Bale Management"
+admin.site_title = "TSF Mvurwi Admin"
+admin.site.index_title = "Dashboard"
+
 @admin.register(BRRecord)
 class BRRecordAdmin(admin.ModelAdmin):
     list_display = ['br_number', 'sale_date', 'total_bales', 'total_mass', 'recorded_by']
@@ -104,7 +109,3 @@ class BaleHistoryAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return False
 
-# --- Branding ---
-admin.site_header = "BR Bale Tracker Admin"
-admin.site_title = "Bale Tracker"
-admin.site.index_title = "TSF Mvurwi - Bale Management"
