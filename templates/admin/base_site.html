@@ -1,0 +1,101 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block extrastyle %}
+<style>
+:root {
+  /* Match your app theme */
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --bg-secondary: #f1f5f9;
+  --text: #1e293b;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --radius: 12px;
+  --success: #38a169;
+  --warning: #f57c00;
+}
+
+/* Header */
+#header {
+  background: var(--primary);
+  color: white;
+  padding: 1rem 2rem;
+}
+
+#branding h1 {
+  color: white;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+#branding h1 a:link, #branding h1 a:visited {
+  color: white;
+}
+
+/* User tools */
+#user-tools {
+  color: rgba(255,255,255,0.9);
+}
+
+#user-tools a {
+  color: white;
+  border-bottom: 1px solid rgba(255,255,255,0.3);
+}
+
+/* Module headers */
+.module h2, .module caption, .inline-group h2, .module caption {
+  background: var(--primary);
+  color: white;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+/* Buttons */
+.button, input[type=submit], input[type=button], .submit-row input, .button.default {
+  background: var(--primary);
+  color: white;
+  border-radius: var(--radius);
+  padding: 0.5rem 1rem;
+  border: none;
+  font-weight: 600;
+}
+
+.button:hover, input[type=submit]:hover, .button.default:hover {
+  background: var(--primary-dark);
+}
+
+/* Links */
+a:link, a:visited {
+  color: var(--primary);
+}
+
+a:hover {
+  color: var(--primary-dark);
+}
+
+/* Breadcrumbs */
+div.breadcrumbs {
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+}
+
+/* Status colors for list_display */
+.field-status, .field-reason {
+  font-weight: 600;
+}
+
+.field-status[data-value="InStock"] {
+  color: var(--success);
+}
+
+.field-status[data-value="Reserved"] {
+  color: var(--warning);
+}
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+  <a href="{% url 'admin:index' %}">TSF Mvurwi - Bale Management</a>
+</h1>
+{% endblock %}
